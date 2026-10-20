@@ -7,6 +7,7 @@ using System.Threading.RateLimiting;
 using System.Security.Claims;
 
 using Models;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+builder.Services.AddScoped<ResponseService>();
 
 builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -91,7 +94,33 @@ builder.Services.AddRateLimiter(options =>
             }
         );
     });
+
+    options.AddPolicy("create-response", httpContext =>
+    {
+        var userId = httpContext.User.FindFirstValue(
+            ClaimTypes.NameIdentifier
+        );
+
+        if (userId is null)
+        {
+            return RateLimitPartition.GetNoLimiter("unauthenticated");
+        }
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey : userId,
+            factory : _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }
+        );
+    });
 });
+
+
+
 
 
 builder.Services.AddControllers();
@@ -108,6 +137,13 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+
+if(app.Environment.IsDevelopment())
+{
+    app.UseCors("LocalReact");
+}
+
 
 app.UseAuthentication();
 
