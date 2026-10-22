@@ -1,6 +1,12 @@
+
 import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import { apiRequest } from "../api/client";
-import type { RegisterRequest } from "../types/auth";
+import { useAuth } from "../context/AuthContext";
+import type {
+  CurrentUser,
+  RegisterRequest,
+} from "../types/auth";
 import "./RegisterPage.css";
 
 interface Community {
@@ -13,7 +19,15 @@ interface Residence {
   state: string;
 }
 
-export default function RegisterPage() {
+interface RegisterPageProps {
+  onLogin: () => void;
+}
+
+export default function RegisterPage({
+  onLogin,
+}: RegisterPageProps) {
+  const { setUser } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [communityId, setCommunityId] = useState("");
@@ -65,14 +79,27 @@ export default function RegisterPage() {
   }, []);
 
   async function handleSubmit(
-    event: React.SubmitEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
     if (submitting || loading) return;
 
-    setSubmitting(true);
     setMessage("");
+
+    if (!email.includes("@")) {
+      setMessage("Ingresa un correo electrónico válido.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setMessage(
+        "La contraseña debe tener al menos 8 caracteres."
+      );
+      return;
+    }
+
+    setSubmitting(true);
 
     const request: RegisterRequest = {
       email,
@@ -83,12 +110,15 @@ export default function RegisterPage() {
     };
 
     try {
-      await apiRequest<void>("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(request),
-      });
+      const user = await apiRequest<CurrentUser>(
+        "/auth/register",
+        {
+          method: "POST",
+          body: JSON.stringify(request),
+        }
+      );
 
-      setMessage("Cuenta creada correctamente.");
+      setUser(user);
     } catch (error) {
       const detail =
         error instanceof Error ? error.message : "";
@@ -96,7 +126,11 @@ export default function RegisterPage() {
       if (detail === "API error: 409") {
         setMessage("Este correo ya está registrado.");
       } else if (detail === "API error: 429") {
-        setMessage("Demasiados intentos. Intenta más tarde.");
+        setMessage(
+          "Demasiados intentos. Intenta más tarde."
+        );
+      } else if (detail === "API error: 403") {
+        setMessage("Acceso bloqueado.");
       } else {
         setMessage("No se pudo crear la cuenta.");
       }
@@ -114,29 +148,40 @@ export default function RegisterPage() {
         </header>
 
         <form onSubmit={handleSubmit}>
-          <label htmlFor="email">Correo electrónico</label>
+          <label htmlFor="email">
+            Correo electrónico
+          </label>
           <input
             id="email"
             type="email"
             placeholder="ejemplo@correo.com"
             autoComplete="email"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) =>
+              setEmail(event.target.value)
+            }
             required
           />
 
-          <label htmlFor="password">Contraseña</label>
+          <label htmlFor="password">
+            Contraseña
+          </label>
           <input
             id="password"
             type="password"
             placeholder="Contraseña"
             autoComplete="new-password"
+            minLength={8}
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(event) =>
+              setPassword(event.target.value)
+            }
             required
           />
 
-          <label htmlFor="community">Comunidad</label>
+          <label htmlFor="community">
+            Comunidad
+          </label>
           <select
             id="community"
             value={communityId}
@@ -146,7 +191,9 @@ export default function RegisterPage() {
             disabled={loading}
             required
           >
-            <option value="">Selecciona una comunidad</option>
+            <option value="">
+              Selecciona una comunidad
+            </option>
             {communities.map((community) => (
               <option
                 key={community.id}
@@ -157,7 +204,9 @@ export default function RegisterPage() {
             ))}
           </select>
 
-          <label htmlFor="residence">Residencia</label>
+          <label htmlFor="residence">
+            Residencia
+          </label>
           <select
             id="residence"
             value={residenceId}
@@ -167,7 +216,9 @@ export default function RegisterPage() {
             disabled={loading}
             required
           >
-            <option value="">Selecciona una residencia</option>
+            <option value="">
+              Selecciona una residencia
+            </option>
             {residences.map((residence) => (
               <option
                 key={residence.id}
@@ -188,7 +239,9 @@ export default function RegisterPage() {
               overflow: "hidden",
             }}
           >
-            <label htmlFor="address">Address</label>
+            <label htmlFor="address">
+              Address
+            </label>
             <input
               id="address"
               name="address"
@@ -211,11 +264,19 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        {message && <p role="status">{message}</p>}
+        {message && (
+          <p role="status">{message}</p>
+        )}
 
         <footer className="register-footer">
           <p>¿Ya tienes una cuenta?</p>
-          <span>Iniciar sesión</span>
+          <button
+            type="button"
+            className="register-link"
+            onClick={onLogin}
+          >
+            Iniciar sesión
+          </button>
         </footer>
       </section>
     </main>

@@ -1,0 +1,32 @@
+
+.main-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 0;
+  }
+  
+  .main-pagination button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 5px;
+    background: #c62828;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .main-pagination button:disabled {
+    background: #f1f1f1;
+    color: #777777;
+    cursor: default;
+  }
+  
+  .main-page-number {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  

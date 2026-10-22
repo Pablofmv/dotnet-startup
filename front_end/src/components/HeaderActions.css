@@ -1,0 +1,35 @@
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .header-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  
+  .header-action img {
+    display: block;
+    width: 22px;
+    height: 22px;
+  }
+  
+  .header-action:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  
+  .header-action:focus-visible {
+    outline: 2px solid #c62828;
+    outline-offset: 2px;
+    border-radius: 5px;
+  }
+  

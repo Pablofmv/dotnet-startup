@@ -11,4 +11,7 @@ public class QuestionFeedItemResponse
     public DateTime CreatedAt {get; set;}
 
     public bool CanDelete {get; set;}
+
+    public required string Username { get; set;}
+    public int ResponseCount { get; set;}
 }

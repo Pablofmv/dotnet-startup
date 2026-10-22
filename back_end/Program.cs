@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Security.Claims;
-
 using Models;
 using Services;
 
@@ -18,7 +17,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-
 builder.Services.AddScoped<ResponseService>();
 
 builder.Services
@@ -26,17 +24,19 @@ builder.Services
     .AddCookie(options =>
     {
         options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SecurePolicy =
+            builder.Environment.IsDevelopment()
+                ? CookieSecurePolicy.None
+                : CookieSecurePolicy.Always;
         options.Cookie.SameSite = SameSiteMode.Strict;
 
         options.ExpireTimeSpan = TimeSpan.FromDays(60);
         options.SlidingExpiration = false;
     });
 
-
 builder.Services.AddAuthorization();
 
-builder.Services.AddRateLimiter(options => 
+builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
@@ -56,7 +56,6 @@ builder.Services.AddRateLimiter(options =>
     );
 
     options.AddPolicy("login", httpContext =>
-    
         RateLimitPartition.GetFixedWindowLimiter(
             partitionKey:
                 httpContext.Connection.RemoteIpAddress?.ToString()
@@ -66,10 +65,9 @@ builder.Services.AddRateLimiter(options =>
                 PermitLimit = 10,
                 Window = TimeSpan.FromMinutes(15),
                 QueueLimit = 0,
-                AutoReplenishment = true,
+                AutoReplenishment = true
             }
         )
-
     );
 
     options.AddPolicy("create-question", httpContext =>
@@ -84,7 +82,7 @@ builder.Services.AddRateLimiter(options =>
         }
 
         return RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey : userId,
+            partitionKey: userId,
             factory: _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 2,
@@ -107,8 +105,8 @@ builder.Services.AddRateLimiter(options =>
         }
 
         return RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey : userId,
-            factory : _ => new FixedWindowRateLimiterOptions
+            partitionKey: userId,
+            factory: _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 3,
                 Window = TimeSpan.FromMinutes(1),
@@ -119,12 +117,7 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
-
-
-
-
 builder.Services.AddControllers();
-
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -135,22 +128,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
-
-
-if(app.Environment.IsDevelopment())
-{
-    app.UseCors("LocalReact");
-}
-
-
 app.UseAuthentication();
-
 app.UseRateLimiter();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

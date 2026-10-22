@@ -3,12 +3,18 @@ export interface CreateQuestionRequest {
     categoryId: string;
 }
 
+export interface CreateQuestionResponse {
+    id: string;
+}
+
 export interface QuestionFeedItem {
     id: string;
     questionText: string;
     categoryId: string;
     createdAt: string;
     canDelete: boolean;
+    username: string;
+    responseCount: number;
 }
 
 export interface QuestionFeed {
@@ -24,7 +30,7 @@ export interface QuestionDetail {
     questionText: string;
     categoryId: string;
     createdAt: string;
-    canDelete: string;
+    canDelete: boolean;
 }
 
 export interface CreateResponseRequest {

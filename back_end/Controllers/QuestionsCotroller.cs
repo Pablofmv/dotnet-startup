@@ -115,9 +115,10 @@ public class QuestionsController : ControllerBase
             return Unauthorized();
         }
 
-        var currentUser = await _dbContext.Users.AsNoTracking().Where(
-            u => u.Id == userId
-        ).Select(
+        var currentUser = await _dbContext.Users
+            .AsNoTracking()
+            .Where(u => u.Id == userId).
+            Select(
             u => new
             {
                 u.CommunityId,
@@ -154,7 +155,10 @@ public class QuestionsController : ControllerBase
                 QuestionText = q.QuestionText,
                 CategoryId = q.CategoryId,
                 CreatedAt = q.CreatedAt,
-                CanDelete = q.UserId == userId
+                CanDelete = q.UserId == userId,
+                Username = q.User.Username,
+                ResponseCount = _dbContext.Responses.Count(
+                    r => r.QuestionId == q.Id)
             })
             .ToListAsync();
         

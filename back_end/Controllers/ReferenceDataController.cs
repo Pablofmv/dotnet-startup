@@ -45,4 +45,19 @@ public class ReferenceDataController : ControllerBase
         return Ok(residences);
     }
 
+    [HttpGet("categories")]
+    public async Task<IActionResult> GetCategories()
+    {
+        var categories = await _dbContext.Categories 
+            .AsNoTracking()
+            .OrderBy(c => c.Name)
+            .Select(c => new {
+                c.Id,
+                c.Name
+            })
+            .ToListAsync();
+        
+        return Ok(categories);
+    }
+
 }
