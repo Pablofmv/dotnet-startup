@@ -1,0 +1,16 @@
+# ASP.NET Core
+**/bin/
+**/obj/
+
+# React
+**/node_modules/
+**/dist/
+
+# Environment variables and secrets
+.env
+.env.*
+**/appsettings.Development.json
+**/appsettings.Production.json
+
+# Operating system
+.DS_Store
