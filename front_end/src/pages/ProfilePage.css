@@ -1,0 +1,162 @@
+
+.profile-page {
+  min-height: 100dvh;
+  background: #ffffff;
+  color: #111111;
+  font-family: Arial, sans-serif;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px 16px 20px;
+  box-sizing: border-box;
+}
+
+/* Header */
+
+.profile-header {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.profile-back,
+.profile-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.profile-back {
+  color: #111111;
+  font-size: 24px;
+}
+
+.profile-icon {
+  justify-self: center;
+  width: 24px;
+  height: 24px;
+}
+
+.profile-logout img {
+  width: 22px;
+  height: 22px;
+}
+
+/* Information fields */
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 0;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.profile-label {
+  color: #777777;
+  font-size: 12px;
+}
+
+.profile-value {
+  color: #111111;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Username editing */
+
+.profile-username-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+.profile-username-row .profile-value {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.profile-username-input {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  box-sizing: border-box;
+  padding: 6px 10px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111111;
+  font: 14px Arial, sans-serif;
+}
+
+.profile-username-input:focus {
+  outline: 2px solid #c62828;
+  outline-offset: 1px;
+}
+
+.profile-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.profile-action img {
+  width: 20px;
+  height: 20px;
+}
+
+.profile-character-count {
+  color: #777777;
+  font-size: 11px;
+  text-align: right;
+}
+
+/* Messages */
+
+.profile-message {
+  padding: 20px 0;
+  color: #777777;
+  font-size: 13px;
+  text-align: center;
+}
+
+.profile-error {
+  margin: 12px 0 0;
+  color: #c62828;
+  font-size: 12px;
+}
+
+/* Button states */
+
+.profile-action:disabled,
+.profile-logout:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.profile-back:focus-visible,
+.profile-logout:focus-visible,
+.profile-action:focus-visible {
+  outline: 2px solid #c62828;
+  outline-offset: 2px;
+}

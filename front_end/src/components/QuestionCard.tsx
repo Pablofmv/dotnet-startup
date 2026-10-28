@@ -9,11 +9,13 @@ import "./QuestionCard.css";
 interface QuestionCardProps {
     question: QuestionFeedItem;
     onDelete: (questionId: string) => Promise<void>;
+    onSelect: (questionId: string, categoryId:string) => void;
 }
 
 export default function QuestionCard({
     question,
     onDelete,
+    onSelect,
 } : QuestionCardProps) {
     
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -53,16 +55,7 @@ export default function QuestionCard({
                             setShowConfirmation(true);
                         }}
                     >
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            aria-hidden="true"
-                            >
-                            <path d="M18 6 6 18M6 6l12 12" />
-                        </svg>
+                        <img src="/icons/delete.svg" alt=""/>
                     </button>
                 )}
             </div>
@@ -74,9 +67,11 @@ export default function QuestionCard({
             <div className="question-card-meta">
                 <span>{question.username}</span>
 
-                <span
+                <button
+                    type="button"
                     className="question-card-responses"
                     aria-label={`${question.responseCount} respuestas`}
+                    onClick={()=> onSelect(question.id, question.categoryId)}
                 >
                     <svg
                         viewBox="0 0 24 24"
@@ -90,7 +85,7 @@ export default function QuestionCard({
                         <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 21l1.5-4.5A8.4 8.4 0 1 1 21 11.5Z" />
                     </svg>
                     <span>{question.responseCount}</span>
-                </span>
+                </button>
             </div>
 
             {deleteError && (

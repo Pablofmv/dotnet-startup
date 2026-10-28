@@ -15,6 +15,22 @@
           }
         }
       },
+      "Microsoft.AspNetCore.DataProtection.EntityFrameworkCore/10.0.10": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "10.0.10"
+        },
+        "compile": {
+          "lib/net10.0/Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.AspNetCore.OpenApi/10.0.13": {
         "type": "package",
         "dependencies": {
@@ -688,6 +704,22 @@
         "lib/netstandard2.0/Humanizer.dll",
         "lib/netstandard2.0/Humanizer.xml",
         "logo.png"
+      ]
+    },
+    "Microsoft.AspNetCore.DataProtection.EntityFrameworkCore/10.0.10": {
+      "sha512": "aDcFxkljLWxpOsDh8Wz9Mbmj067p/nl4LouZA9gU54MeivntGqvA67Z3b4hf+oU7SiTtOCI2KPD8FDVZlH8EKA==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.dataprotection.entityframeworkcore/10.0.10",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net10.0/Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll",
+        "lib/net10.0/Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.xml",
+        "microsoft.aspnetcore.dataprotection.entityframeworkcore.10.0.10.nupkg.sha512",
+        "microsoft.aspnetcore.dataprotection.entityframeworkcore.nuspec"
       ]
     },
     "Microsoft.AspNetCore.OpenApi/10.0.13": {
@@ -2200,6 +2232,7 @@
   },
   "projectFileDependencyGroups": {
     "net10.0": [
+      "Microsoft.AspNetCore.DataProtection.EntityFrameworkCore >= 10.0.10",
       "Microsoft.AspNetCore.OpenApi >= 10.0.13",
       "Microsoft.EntityFrameworkCore.Design >= 10.0.12",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 10.0.3"
@@ -2250,6 +2283,10 @@
         "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
+          "Microsoft.AspNetCore.DataProtection.EntityFrameworkCore": {
+            "target": "Package",
+            "version": "[10.0.10, )"
+          },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[10.0.13, )"

@@ -335,8 +335,17 @@ public class QuestionsController : ControllerBase
 
     [Authorize]
     [HttpGet("{questionId:guid}/responses")]
-    public async Task<IActionResult> GetResponses(Guid questionId)
+    public async Task<IActionResult> GetResponses(
+        Guid questionId,
+        [FromQuery] int page = 1
+    )
     {
+
+        if (page < 1 || page > int.MaxValue / 4)
+        {
+            return BadRequest("Invalid page.");
+        }
+
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (!Guid.TryParse(userIdClaim, out var userId))
@@ -375,21 +384,37 @@ public class QuestionsController : ControllerBase
             return NotFound();
         }
 
-        var responses = await _dbContext.Responses 
+
+        var query = _dbContext.Responses
             .AsNoTracking()
-            .Where(r => r.QuestionId == questionId)
+            .Where(r => r.QuestionId == questionId);
+
+        var totalResponses = await query.CountAsync();
+
+        var totalPages = (int)Math.Ceiling(totalResponses / 4.0);
+
+
+        var responses = await query
             .OrderBy(r => r.CreatedAt)
             .ThenBy(r => r.Id)
+            .Skip((page - 1) * 4)
+            .Take(4)
             .Select(r => new ResponseItemResponse
             {
                 Id = r.Id,
                 Body = r.Body,
                 CreatedAt = r.CreatedAt,
-                CanDelete = r.UserId == userId
+                CanDelete = r.UserId == userId,
+                Username = r.User.Username
             })
             .ToListAsync();
         
-        return Ok(responses);
+        return Ok(new ResponseFeedResponse
+        {
+            Responses = responses,
+            Page = page,
+            TotalPages = totalPages
+        });
     }
 
 

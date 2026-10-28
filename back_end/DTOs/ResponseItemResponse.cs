@@ -9,4 +9,6 @@ public class ResponseItemResponse
     public DateTime CreatedAt {get; set;}
 
     public bool CanDelete {get; set;}
+
+    public required string Username {get; set;}
 }

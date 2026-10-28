@@ -1,9 +1,11 @@
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Models;
 
 namespace Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : DbContext, IDataProtectionKeyContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -25,9 +27,11 @@ public class AppDbContext : DbContext
 
     public DbSet<BlockedIp> BlockedIps => Set<BlockedIp>();
 
+    public DbSet<DataProtectionKey> DataProtectionKeys =>
+        Set<DataProtectionKey>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
         modelBuilder.Entity<User>()
             .Property(u => u.Id)
             .HasDefaultValueSql("gen_random_uuid()");
@@ -54,6 +58,10 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<VisibilityRule>()
             .Property(v => v.Id)
+            .HasDefaultValueSql("gen_random_uuid()");
+
+        modelBuilder.Entity<BlockedIp>()
+            .Property(b => b.Id)
             .HasDefaultValueSql("gen_random_uuid()");
 
         modelBuilder.Entity<User>()

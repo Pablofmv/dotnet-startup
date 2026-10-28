@@ -18,3 +18,32 @@ export function getCategories(): Promise<Category[]> {
         "/reference-data/categories"
     );
 }
+
+let cachedData: Promise<{
+    communities: Community[];
+    residences: Residence[];
+    categories: Category[];
+}> | null = null;
+
+export function getLocalReferenceData() {
+    if(cachedData) {
+        return cachedData;
+    }
+
+    cachedData = Promise.all([
+        getCommunities(),
+        getResidences(),
+        getCategories(),
+    ])
+    .then(([communities, residences, categories]) => ({
+        communities,
+        residences,
+        categories,
+    }))
+    .catch((error) => {
+        cachedData = null;
+        throw error;
+    });
+
+    return cachedData;
+}

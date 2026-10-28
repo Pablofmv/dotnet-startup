@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "../context/AuthContext";
 
-import {
-  getCommunities,
-  getResidences,
-  getCategories,
-} from "../api/referenceData";
+import { getLocalReferenceData } from "../api/referenceData";
 
 import {
   getQuestions,
@@ -24,7 +20,14 @@ import "./MainPage.css";
 
 interface MainPageProps {
   initialCategoryId: string | null;
+  page: number;
+  onPageChange: (page:number) => void;
   onCreateQuestion: () => void;
+  onProfile: () => void;
+  onSelectQuestion: (
+    questionId: string,
+    categoryId: string
+  ) => void;
 }
 
 interface FeedState {
@@ -35,13 +38,16 @@ interface FeedState {
 
 export default function MainPage({
   initialCategoryId,
+  page,
+  onPageChange,
   onCreateQuestion,
+  onProfile,
+  onSelectQuestion,
 }: MainPageProps) {
   const { user } = useAuth();
 
   const [community, setCommunity] = useState("");
   const [residence, setResidence] = useState("");
-
   const [categories, setCategories] = useState<Category[]>([]);
 
   const [selectedCategoryId, setSelectedCategoryId] =
@@ -50,7 +56,6 @@ export default function MainPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const [page, setPage] = useState(1);
   const [refreshCount, setRefreshCount] = useState(0);
 
   const [feedState, setFeedState] =
@@ -79,12 +84,11 @@ export default function MainPage({
       setError(false);
 
       try {
-        const [communities, residences, categoryData] =
-          await Promise.all([
-            getCommunities(),
-            getResidences(),
-            getCategories(),
-          ]);
+        const {
+          communities,
+          residences,
+          categories: categoryData,
+        } = await getLocalReferenceData();
 
         if (!active) return;
 
@@ -147,9 +151,7 @@ export default function MainPage({
         if (!active) return;
 
         if (result.questions.length === 0 && page > 1) {
-          setPage((currentPage) =>
-            Math.max(1, currentPage - 1)
-          );
+          onPageChange(Math.max(1,page-1));
           return;
         }
 
@@ -179,7 +181,7 @@ export default function MainPage({
   function handleCategoryChange(categoryId: string) {
     if (categoryId === selectedCategoryId) return;
 
-    setPage(1);
+    onPageChange(1);
     setSelectedCategoryId(categoryId);
   }
 
@@ -211,6 +213,7 @@ export default function MainPage({
 
           <HeaderActions
             onCreateQuestion={onCreateQuestion}
+            onProfile={onProfile}
           />
         </header>
 
@@ -268,6 +271,7 @@ export default function MainPage({
                 key={question.id}
                 question={question}
                 onDelete={handleDeleteQuestion}
+                onSelect={onSelectQuestion}
               />
             ))
           )}
@@ -278,7 +282,7 @@ export default function MainPage({
             page={page}
             hasNextPage={feed.hasNextPage}
             hasPreviousPage={feed.hasPreviousPage}
-            onPageChange={setPage}
+            onPageChange={onPageChange}
           />
         )}
       </div>

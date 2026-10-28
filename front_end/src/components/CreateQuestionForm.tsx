@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
-import { getCategories } from "../api/referenceData";
+import { getLocalReferenceData } from "../api/referenceData";
 import { createQuestion } from "../api/questions";
 
 import type { Category } from "../types/referenceData";
@@ -34,10 +34,10 @@ export default function CreateQuestionForm({
 
     async function loadCategories() {
       try {
-        const result = await getCategories();
+        const result = await getLocalReferenceData();
 
         if (active) {
-          setCategories(result);
+          setCategories(result.categories);
         }
       } catch {
         if (active) {

@@ -1,0 +1,80 @@
+
+.response-composer {
+  margin-top: 16px;
+}
+
+.response-composer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.response-composer textarea {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111111;
+  font: 14px Arial, sans-serif;
+  resize: none;
+}
+
+.response-composer textarea:focus {
+  outline: 2px solid #c62828;
+}
+
+.response-composer-row button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: #c62828;
+  cursor: pointer;
+}
+
+.response-composer-row button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.response-composer-row button img {
+  width: 20px;
+  height: 20px;
+}
+
+.response-character-count {
+  display: block;
+  margin-top: 4px;
+  color: #777777;
+  font-size: 11px;
+  text-align: right;
+}
+
+.response-rate-message {
+  margin: 8px 0 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(198, 40, 40, 0.05);
+  color: #c62828;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.response-rate-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.response-rate-message img {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}

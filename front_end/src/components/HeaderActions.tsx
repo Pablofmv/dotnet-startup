@@ -2,10 +2,12 @@ import "./HeaderActions.css"
 
 interface HeaderActionsProps {
     onCreateQuestion: () => void;
+    onProfile: () => void;
 }
 
 export default function HeaderActions({
     onCreateQuestion,
+    onProfile,
 } : HeaderActionsProps) {
     return (
         <div className="header-actions">
@@ -22,9 +24,9 @@ export default function HeaderActions({
             <button
                 type="button"
                 className="header-action"
+                onClick={onProfile}
                 aria-label="Perfil"
                 title="Perfil"
-                disabled
             >
                 <img src="/icons/profile.svg" alt=""/>
             </button>

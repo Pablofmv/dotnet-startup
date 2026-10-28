@@ -252,6 +252,46 @@ public class AuthController : ControllerBase
         return Ok(currentUser);
     }
 
+
+    [Authorize]
+    [HttpPatch("username")]
+    public async Task<IActionResult> UpdateUsername(
+        UpdateUsernameRequest request
+    )
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if(!Guid.TryParse(userIdClaim, out var userId))
+        return Unauthorized();
+
+        var username = request.Username.Trim();
+
+        if (username.Length < 1 || username.Length > 12)
+            return BadRequest("Username must be 1 to 12 characters.");
+
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user is null)
+            return Unauthorized();
+
+        user.Username = username;
+
+        await _dbContext.SaveChangesAsync();
+
+         var currentUser = new CurrentUserResponse
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            CommunityId = user.CommunityId,
+            ResidenceId = user.ResidenceId
+        };
+
+        return Ok(currentUser);
+
+    }
+
+
     [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
