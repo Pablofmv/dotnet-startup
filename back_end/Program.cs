@@ -149,22 +149,6 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    var forwardedIp =
-        context.Request.Headers["X-Forwarded-For"].ToString();
-
-    var forwardedProtocol =
-        context.Request.Headers["X-Forwarded-Proto"].ToString();
-
-    app.Logger.LogInformation(
-        "Proxy test: ForwardedFor={ForwardedFor}, Protocol={Protocol}",
-        forwardedIp,
-        forwardedProtocol);
-
-    await next(context);
-});
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -177,4 +161,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
 
