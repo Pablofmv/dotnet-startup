@@ -66,8 +66,6 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-// Process only one forwarded hop from the observed
-// Northflank internal network.
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders =
@@ -167,19 +165,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Restore client IP and HTTPS from the trusted proxy.
 app.UseForwardedHeaders();
-
-// Temporary validation only.
-app.Use(async (context, next) =>
-{
-    app.Logger.LogInformation(
-        "Validated IP: {Ip}, HTTPS: {Https}",
-        context.Connection.RemoteIpAddress,
-        context.Request.IsHttps);
-
-    await next(context);
-});
 
 if (app.Environment.IsDevelopment())
 {
@@ -193,6 +179,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-
-
