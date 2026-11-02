@@ -1,11 +1,13 @@
+
 using Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using Models;
 using Services;
 
@@ -17,22 +19,43 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
-builder.Services.AddDataProtection()
+var dataProtection = builder.Services.AddDataProtection()
     .SetApplicationName("LOCAL")
     .PersistKeysToDbContext<AppDbContext>();
 
-builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+if (!builder.Environment.IsDevelopment())
+{
+    var certificatePassword =
+        builder.Configuration["LOCAL_CERT_PASSWORD"]
+        ?? throw new InvalidOperationException(
+            "Missing certificate password.");
+
+    var certificate = X509CertificateLoader.LoadPkcs12FromFile(
+        "/secrets/local-dataprotection.pfx",
+        certificatePassword,
+        X509KeyStorageFlags.EphemeralKeySet);
+
+    dataProtection.ProtectKeysWithCertificate(certificate);
+}
+
+builder.Services.AddScoped<
+    IPasswordHasher<User>,
+    PasswordHasher<User>>();
+
 builder.Services.AddScoped<ResponseService>();
 
 builder.Services
-    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddAuthentication(
+        CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.Cookie.HttpOnly = true;
+
         options.Cookie.SecurePolicy =
             builder.Environment.IsDevelopment()
                 ? CookieSecurePolicy.None
                 : CookieSecurePolicy.Always;
+
         options.Cookie.SameSite = SameSiteMode.Strict;
 
         options.ExpireTimeSpan = TimeSpan.FromDays(60);
@@ -43,7 +66,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddRateLimiter(options =>
 {
-    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.RejectionStatusCode =
+        StatusCodes.Status429TooManyRequests;
 
     options.AddPolicy("register", httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
@@ -83,7 +107,8 @@ builder.Services.AddRateLimiter(options =>
 
         if (userId is null)
         {
-            return RateLimitPartition.GetNoLimiter("unauthenticated");
+            return RateLimitPartition.GetNoLimiter(
+                "unauthenticated");
         }
 
         return RateLimitPartition.GetFixedWindowLimiter(
@@ -106,7 +131,8 @@ builder.Services.AddRateLimiter(options =>
 
         if (userId is null)
         {
-            return RateLimitPartition.GetNoLimiter("unauthenticated");
+            return RateLimitPartition.GetNoLimiter(
+                "unauthenticated");
         }
 
         return RateLimitPartition.GetFixedWindowLimiter(
