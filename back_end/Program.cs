@@ -6,12 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,17 +63,6 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
-
-// Trust only the observed Northflank proxy.
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor |
-        ForwardedHeaders.XForwardedProto;
-
-    options.KnownProxies.Add(
-        IPAddress.Parse("::ffff:10.56.142.134"));
-});
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -162,26 +149,11 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Process forwarded headers before all other middleware.
-app.UseForwardedHeaders();
-
-// Temporary diagnostic; remove after validation.
-app.Use(async (context, next) =>
-{
-    app.Logger.LogInformation(
-        "Proxy diagnostic: remote IP {RemoteIp}, HTTPS {IsHttps}",
-        context.Connection.RemoteIpAddress,
-        context.Request.IsHttps);
-
-    await next(context);
-});
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseRateLimiter();
@@ -189,4 +161,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
