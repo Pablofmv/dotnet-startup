@@ -1,15 +1,17 @@
 
 using Data;
+using Models;
+using Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using Models;
-using Services;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,17 +66,27 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
+// Trust only the observed Northflank proxy.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    options.KnownProxies.Add(
+        IPAddress.Parse("::ffff:10.56.142.134"));
+});
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode =
         StatusCodes.Status429TooManyRequests;
 
-    options.AddPolicy("register", httpContext =>
+    options.AddPolicy("register", context =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey:
-                httpContext.Connection.RemoteIpAddress?.ToString()
+            context.Connection.RemoteIpAddress?.ToString()
                 ?? "unknown",
-            factory: _ => new FixedWindowRateLimiterOptions
+            _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 3,
                 Window = TimeSpan.FromDays(1),
@@ -84,12 +96,11 @@ builder.Services.AddRateLimiter(options =>
         )
     );
 
-    options.AddPolicy("login", httpContext =>
+    options.AddPolicy("login", context =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey:
-                httpContext.Connection.RemoteIpAddress?.ToString()
+            context.Connection.RemoteIpAddress?.ToString()
                 ?? "unknown",
-            factory: _ => new FixedWindowRateLimiterOptions
+            _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 10,
                 Window = TimeSpan.FromMinutes(15),
@@ -99,11 +110,10 @@ builder.Services.AddRateLimiter(options =>
         )
     );
 
-    options.AddPolicy("create-question", httpContext =>
+    options.AddPolicy("create-question", context =>
     {
-        var userId = httpContext.User.FindFirstValue(
-            ClaimTypes.NameIdentifier
-        );
+        var userId = context.User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
 
         if (userId is null)
         {
@@ -112,8 +122,8 @@ builder.Services.AddRateLimiter(options =>
         }
 
         return RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: userId,
-            factory: _ => new FixedWindowRateLimiterOptions
+            userId,
+            _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 2,
                 Window = TimeSpan.FromMinutes(5),
@@ -123,11 +133,10 @@ builder.Services.AddRateLimiter(options =>
         );
     });
 
-    options.AddPolicy("create-response", httpContext =>
+    options.AddPolicy("create-response", context =>
     {
-        var userId = httpContext.User.FindFirstValue(
-            ClaimTypes.NameIdentifier
-        );
+        var userId = context.User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
 
         if (userId is null)
         {
@@ -136,8 +145,8 @@ builder.Services.AddRateLimiter(options =>
         }
 
         return RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: userId,
-            factory: _ => new FixedWindowRateLimiterOptions
+            userId,
+            _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 3,
                 Window = TimeSpan.FromMinutes(1),
@@ -153,11 +162,16 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// Process forwarded headers before all other middleware.
+app.UseForwardedHeaders();
+
+// Temporary diagnostic; remove after validation.
 app.Use(async (context, next) =>
 {
     app.Logger.LogInformation(
-        "Proxy diagnostic: remote IP {RemoteIp}",
-        context.Connection.RemoteIpAddress);
+        "Proxy diagnostic: remote IP {RemoteIp}, HTTPS {IsHttps}",
+        context.Connection.RemoteIpAddress,
+        context.Request.IsHttps);
 
     await next(context);
 });
