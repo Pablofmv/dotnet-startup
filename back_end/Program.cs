@@ -149,6 +149,23 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// Temporary forwarding-header diagnostic.
+app.Use(async (context, next) =>
+{
+    var hasForwardedIp =
+        context.Request.Headers.ContainsKey("X-Forwarded-For");
+
+    var forwardedProtocol =
+        context.Request.Headers["X-Forwarded-Proto"].ToString();
+
+    app.Logger.LogInformation(
+        "Forwarded IP present: {HasIp}, Protocol: {Protocol}",
+        hasForwardedIp,
+        forwardedProtocol);
+
+    await next(context);
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
