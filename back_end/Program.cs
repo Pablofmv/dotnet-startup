@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Security.Claims;
@@ -165,17 +164,5 @@ app.UseAuthentication();
 app.UseRateLimiter();
 app.UseAuthorization();
 app.MapControllers();
-
-if (app.Configuration["LOCAL_CREATE_KEY"] == "true"
-    && !app.Environment.IsDevelopment())
-{
-    var keyManager = app.Services.GetRequiredService<IKeyManager>();
-
-    var now = DateTimeOffset.UtcNow;
-
-    keyManager.CreateNewKey(
-        activationDate: now,
-        expirationDate: now.AddDays(90));
-}
 
 app.Run();
