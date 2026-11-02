@@ -149,18 +149,17 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Temporary forwarding-header diagnostic.
 app.Use(async (context, next) =>
 {
-    var hasForwardedIp =
-        context.Request.Headers.ContainsKey("X-Forwarded-For");
+    var forwardedIp =
+        context.Request.Headers["X-Forwarded-For"].ToString();
 
     var forwardedProtocol =
         context.Request.Headers["X-Forwarded-Proto"].ToString();
 
     app.Logger.LogInformation(
-        "Forwarded IP present: {HasIp}, Protocol: {Protocol}",
-        hasForwardedIp,
+        "Proxy test: ForwardedFor={ForwardedFor}, Protocol={Protocol}",
+        forwardedIp,
         forwardedProtocol);
 
     await next(context);
@@ -178,3 +177,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
