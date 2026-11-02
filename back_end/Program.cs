@@ -6,10 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +65,22 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+
+// Process only one forwarded hop from the observed
+// Northflank internal network.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    options.ForwardLimit = 1;
+
+    options.KnownIPNetworks.Add(
+        new System.Net.IPNetwork(
+            IPAddress.Parse("::ffff:10.56.0.0"),
+            112));
+});
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -149,6 +167,20 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// Restore client IP and HTTPS from the trusted proxy.
+app.UseForwardedHeaders();
+
+// Temporary validation only.
+app.Use(async (context, next) =>
+{
+    app.Logger.LogInformation(
+        "Validated IP: {Ip}, HTTPS: {Https}",
+        context.Connection.RemoteIpAddress,
+        context.Request.IsHttps);
+
+    await next(context);
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -161,5 +193,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
 
 
