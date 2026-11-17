@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -5,24 +6,34 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import QuestionDetailPage from "./pages/QuestionDetailPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import OnboardingPage from "./pages/OnboardingPage";
 import MainPage from "./pages/MainPage";
 import CreateQuestionPage from "./pages/CreateQuestionPage";
 import ProfilePage from "./pages/ProfilePage";
 
-type AuthenticatedPage = "feed" | "create-question" | "question-detail" | "profile";
+type AuthenticatedPage =
+  | "feed"
+  | "create-question"
+  | "question-detail"
+  | "profile";
 
 function AppContent() {
   const { user, loading } = useAuth();
 
-  const [authPage, setAuthPage] = useState<"login" | "register">("login");
+  const [authPage, setAuthPage] = useState<
+    "welcome" | "login" | "register"
+  >("welcome");
 
-  const [currentPage, setCurrentPage] = useState<AuthenticatedPage>("feed");
+  const [currentPage, setCurrentPage] =
+    useState<AuthenticatedPage>("feed");
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] =
+    useState<string | null>(null);
 
   const [feedPage, setFeedPage] = useState(1);
 
-  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
+  const [selectedQuestionId, setSelectedQuestionId] =
+    useState<string | null>(null);
 
   function handleQuestionPublished(categoryId: string) {
     setSelectedCategoryId(categoryId);
@@ -30,7 +41,10 @@ function AppContent() {
     setCurrentPage("feed");
   }
 
-  function handleSelectQuestion(questionId:string, categoryId:string) {
+  function handleSelectQuestion(
+    questionId: string,
+    categoryId: string
+  ) {
     setSelectedQuestionId(questionId);
     setSelectedCategoryId(categoryId);
     setCurrentPage("question-detail");
@@ -41,11 +55,10 @@ function AppContent() {
   }
 
   if (user) {
-
     if (currentPage === "profile") {
       return (
         <ProfilePage
-          onBack={()=>setCurrentPage("feed")}
+          onBack={() => setCurrentPage("feed")}
         />
       );
     }
@@ -59,9 +72,12 @@ function AppContent() {
       );
     }
 
-    if(currentPage ==="question-detail" && selectedQuestionId) {
+    if (
+      currentPage === "question-detail" &&
+      selectedQuestionId
+    ) {
       return (
-        <QuestionDetailPage 
+        <QuestionDetailPage
           questionId={selectedQuestionId}
           onBack={() => setCurrentPage("feed")}
         />
@@ -76,8 +92,17 @@ function AppContent() {
         onCreateQuestion={() =>
           setCurrentPage("create-question")
         }
-        onProfile={()=> setCurrentPage("profile")}
+        onProfile={() => setCurrentPage("profile")}
         onSelectQuestion={handleSelectQuestion}
+      />
+    );
+  }
+
+  if (authPage === "welcome") {
+    return (
+      <OnboardingPage
+        onLogin={() => setAuthPage("login")}
+        onRegister={() => setAuthPage("register")}
       />
     );
   }

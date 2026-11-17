@@ -1,0 +1,102 @@
+
+.onboarding-page {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+  
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-height: 100svh;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    padding: 24px;
+    overflow-y: auto;
+  
+    background: #ffffff;
+    color: #111111;
+  
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+  }
+  
+  .onboarding-content {
+    width: 100%;
+    max-width: 360px;
+    min-height: 360px;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+    gap: 72px;
+  }
+  
+  .onboarding-logo {
+    margin: 0;
+  
+    color: #111111;
+    font-size: clamp(64px, 18vw, 84px);
+    font-weight: 750;
+    line-height: 1;
+    letter-spacing: -4px;
+    text-align: center;
+  }
+  
+  .onboarding-actions {
+    width: 100%;
+  
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .onboarding-button {
+    width: 100%;
+    min-height: 54px;
+  
+    border: 0;
+    border-radius: 999px;
+  
+    font: inherit;
+    font-size: 17px;
+    font-weight: 600;
+  
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  
+  .onboarding-primary {
+    background: #007aff;
+    color: #ffffff;
+  }
+  
+  .onboarding-secondary {
+    background: #f5f5f7;
+    color: #111111;
+  }
+  
+  .onboarding-button:focus-visible {
+    outline: 3px solid #007aff;
+    outline-offset: 3px;
+  }
+  
+  .onboarding-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  @media (max-height: 450px) {
+    .onboarding-content {
+      min-height: 280px;
+      gap: 36px;
+    }
+  }
+  
