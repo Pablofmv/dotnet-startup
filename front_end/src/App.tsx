@@ -4,12 +4,10 @@ import { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import QuestionDetailPage from "./pages/QuestionDetailPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import OnboardingPage from "./pages/OnboardingPage";
 import MainPage from "./pages/MainPage";
 import CreateQuestionPage from "./pages/CreateQuestionPage";
 import ProfilePage from "./pages/ProfilePage";
+import OnboardingPage from "./pages/OnboardingPage";
 
 type AuthenticatedPage =
   | "feed"
@@ -98,25 +96,10 @@ function AppContent() {
     );
   }
 
-  if (authPage === "welcome") {
-    return (
-      <OnboardingPage
-        onLogin={() => setAuthPage("login")}
-        onRegister={() => setAuthPage("register")}
-      />
-    );
-  }
-
-  if (authPage === "register") {
-    return (
-      <RegisterPage
-        onLogin={() => setAuthPage("login")}
-      />
-    );
-  }
-
   return (
-    <LoginPage
+    <OnboardingPage
+      mode={authPage}
+      onLogin={() => setAuthPage("login")}
       onRegister={() => setAuthPage("register")}
     />
   );

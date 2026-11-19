@@ -3,24 +3,31 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { apiRequest } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+
 import type {
   CurrentUser,
   LoginRequest,
 } from "../types/auth";
+
 import "./LoginPage.css";
 
 interface LoginPageProps {
   onRegister: () => void;
+  embedded?: boolean;
 }
 
 export default function LoginPage({
   onRegister,
+  embedded = false,
 }: LoginPageProps) {
   const { setUser } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
+
+  const [showPassword, setShowPassword] =
+    useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -71,18 +78,40 @@ export default function LoginPage({
     }
   }
 
-  return (
-    <main className="login-page">
-      <section className="login-container">
-        <header className="login-header">
-          <h1>LOCAL</h1>
-          <p>Encuentra respuestas de tu comunidad local.</p>
-        </header>
+  const Container = embedded ? "div" : "main";
 
-        <form onSubmit={handleSubmit}>
+  return (
+    <Container
+      className={
+        embedded
+          ? "login-page onboarding-login-embedded"
+          : "login-page"
+      }
+    >
+      <section className="login-container">
+        {embedded ? (
+          <h2 className="onboarding-form-title">
+            Iniciar sesión
+          </h2>
+        ) : (
+          <header className="login-header">
+            <h1>LOCAL</h1>
+            <p>Encuentra respuestas de tu comunidad local.</p>
+          </header>
+        )}
+
+        <form
+          id={
+            embedded
+              ? "onboarding-login-form"
+              : undefined
+          }
+          onSubmit={handleSubmit}
+        >
           <label htmlFor="login-email">
             Correo electrónico
           </label>
+
           <input
             id="login-email"
             type="email"
@@ -98,17 +127,36 @@ export default function LoginPage({
           <label htmlFor="login-password">
             Contraseña
           </label>
-          <input
-            id="login-password"
-            type="password"
-            placeholder="Contraseña"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
-            }
-            required
-          />
+
+          <div className="onboarding-password-field">
+            <input
+              id="login-password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Contraseña"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
+              required
+            />
+
+            <button
+              type="button"
+              className="onboarding-password-toggle"
+              onClick={() =>
+                setShowPassword(!showPassword)
+              }
+              aria-label={
+                showPassword
+                  ? "Ocultar contraseña"
+                  : "Mostrar contraseña"
+              }
+              aria-pressed={showPassword}
+            >
+              {showPassword ? "Ocultar" : "Mostrar"}
+            </button>
+          </div>
 
           <div
             aria-hidden="true"
@@ -123,6 +171,7 @@ export default function LoginPage({
             <label htmlFor="login-address">
               Address
             </label>
+
             <input
               id="login-address"
               name="address"
@@ -136,32 +185,41 @@ export default function LoginPage({
             />
           </div>
 
-          <button
-            type="submit"
-            className="login-button"
-            disabled={submitting}
-          >
-            {submitting
-              ? "Iniciando..."
-              : "Iniciar sesión"}
-          </button>
+          {!embedded && (
+            <button
+              type="submit"
+              className="login-button"
+              disabled={submitting}
+            >
+              {submitting
+                ? "Iniciando..."
+                : "Iniciar sesión"}
+            </button>
+          )}
         </form>
 
         {message && (
-          <p role="status">{message}</p>
+          <p
+            role="status"
+            className="onboarding-form-message"
+          >
+            {message}
+          </p>
         )}
 
-        <footer className="login-footer">
-          <p>¿No tienes cuenta?</p>
-          <button
-            type="button"
-            className="login-link"
-            onClick={onRegister}
-          >
-            Crear cuenta
-          </button>
-        </footer>
+        {!embedded && (
+          <footer className="login-footer">
+            <p>¿No tienes cuenta?</p>
+            <button
+              type="button"
+              className="login-link"
+              onClick={onRegister}
+            >
+              Crear cuenta
+            </button>
+          </footer>
+        )}
       </section>
-    </main>
+    </Container>
   );
 }

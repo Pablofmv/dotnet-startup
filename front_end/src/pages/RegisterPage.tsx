@@ -21,10 +21,12 @@ interface Residence {
 
 interface RegisterPageProps {
   onLogin: () => void;
+  embedded?: boolean;
 }
 
 export default function RegisterPage({
   onLogin,
+  embedded = false,
 }: RegisterPageProps) {
   const { setUser } = useAuth();
 
@@ -140,14 +142,33 @@ export default function RegisterPage({
   }
 
   return (
-    <main className="register-page">
+    <main
+      className={
+        embedded
+          ? "register-page onboarding-register-embedded"
+          : "register-page"
+      }
+    >
       <section className="register-container">
-        <header className="register-header">
-          <h1>LOCAL</h1>
-          <p>Encuentra respuestas de tu comunidad local.</p>
-        </header>
+        {embedded ? (
+          <h2 className="onboarding-form-title">
+            Crear cuenta
+          </h2>
+        ) : (
+          <header className="register-header">
+            <h1>LOCAL</h1>
+            <p>Encuentra respuestas de tu comunidad local.</p>
+          </header>
+        )}
 
-        <form onSubmit={handleSubmit}>
+        <form
+          id={
+            embedded
+              ? "onboarding-register-form"
+              : undefined
+          }
+          onSubmit={handleSubmit}
+        >
           <label htmlFor="email">
             Correo electrónico
           </label>
@@ -255,29 +276,35 @@ export default function RegisterPage({
             />
           </div>
 
-          <button
-            type="submit"
-            className="register-button"
-            disabled={submitting || loading}
-          >
-            {submitting ? "Creando..." : "Crear cuenta"}
-          </button>
+          {!embedded && (
+            <button
+              type="submit"
+              className="register-button"
+              disabled={submitting || loading}
+            >
+              {submitting ? "Creando..." : "Crear cuenta"}
+            </button>
+          )}
         </form>
 
         {message && (
-          <p role="status">{message}</p>
+          <p role="status" className="onboarding-form-message">
+            {message}
+          </p>
         )}
 
-        <footer className="register-footer">
-          <p>¿Ya tienes una cuenta?</p>
-          <button
-            type="button"
-            className="register-link"
-            onClick={onLogin}
-          >
-            Iniciar sesión
-          </button>
-        </footer>
+        {!embedded && (
+          <footer className="register-footer">
+            <p>¿Ya tienes una cuenta?</p>
+            <button
+              type="button"
+              className="register-link"
+              onClick={onLogin}
+            >
+              Iniciar sesión
+            </button>
+          </footer>
+        )}
       </section>
     </main>
   );

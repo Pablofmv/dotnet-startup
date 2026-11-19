@@ -1,102 +1,386 @@
 
 .onboarding-page {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-  
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    min-height: 100svh;
-  
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  
-    padding: 24px;
-    overflow-y: auto;
-  
-    background: #ffffff;
-    color: #111111;
-  
-    font-family:
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      sans-serif;
-  }
-  
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 100svh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 24px;
+  overflow-y: auto;
+
+  background: #ffffff;
+  color: #111111;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+.onboarding-content {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 360px;
+  height: min(620px, calc(100svh - 48px));
+
+  display: flex;
+  flex-direction: column;
+}
+
+.onboarding-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.onboarding-welcome {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboarding-logo-container {
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+.onboarding-logo {
+  margin: 0;
+
+  color: #111111;
+  font-size: clamp(64px, 18vw, 84px);
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: -4px;
+  text-align: center;
+}
+
+/* Yellow sparkles */
+
+.onboarding-sparkle {
+  position: absolute;
+  color: #efff00;
+  font-size: 28px;
+  line-height: 1;
+
+  text-shadow:
+    0 0 8px #efff00,
+    0 0 18px #dfff00,
+    0 0 28px #eaff00;
+
+  pointer-events: none;
+}
+
+.sparkle-1 {
+  top: -36px;
+  left: 8%;
+}
+
+.sparkle-2 {
+  top: -48px;
+  left: 35%;
+  font-size: 20px;
+}
+
+.sparkle-3 {
+  top: -38px;
+  right: 14%;
+}
+
+.sparkle-4 {
+  top: -18px;
+  right: 0;
+  font-size: 22px;
+}
+
+.sparkle-5 {
+  top: 20%;
+  left: -10px;
+}
+
+.sparkle-6 {
+  top: 50%;
+  right: -12px;
+}
+
+.sparkle-7 {
+  top: 65%;
+  left: 2%;
+  font-size: 19px;
+}
+
+.sparkle-8 {
+  top: 12%;
+  right: 28%;
+  font-size: 17px;
+}
+
+.sparkle-9 {
+  bottom: -28px;
+  left: 12%;
+}
+
+.sparkle-10 {
+  bottom: -44px;
+  left: 42%;
+  font-size: 22px;
+}
+
+.sparkle-11 {
+  bottom: -32px;
+  right: 14%;
+}
+
+.sparkle-12 {
+  bottom: -13px;
+  right: 3%;
+  font-size: 18px;
+}
+
+/* Persistent buttons */
+
+.onboarding-actions {
+  width: 100%;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.onboarding-button {
+  width: 100%;
+  min-height: 54px;
+
+  border: 0;
+  border-radius: 999px;
+
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.onboarding-primary {
+  background: #007aff;
+  color: #ffffff;
+}
+
+.onboarding-secondary-slot {
+  position: relative;
+  height: 54px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboarding-login-action {
+  position: absolute;
+  inset: 0;
+
+  background: #f5f5f7;
+  color: #111111;
+}
+
+.onboarding-footer {
+  margin: 0;
+  color: #111111;
+  font-size: 14px;
+  text-align: center;
+}
+
+.onboarding-link {
+  border: 0;
+  padding: 4px 0;
+
+  background: transparent;
+  color: #007aff;
+
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.onboarding-button:focus-visible,
+.onboarding-link:focus-visible,
+.onboarding-password-toggle:focus-visible {
+  outline: 3px solid #007aff;
+  outline-offset: 3px;
+}
+
+.onboarding-button:disabled {
+  pointer-events: none;
+}
+
+/* Embedded forms */
+
+.onboarding-form-area {
+  position: absolute;
+  inset: 0;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.onboarding-page .onboarding-register-embedded,
+.onboarding-page .onboarding-login-embedded {
+  box-sizing: border-box;
+  display: block;
+
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 8px 0;
+
+  background: #ffffff;
+  color: #111111;
+  text-align: left;
+}
+
+.onboarding-page .onboarding-register-embedded .register-container,
+.onboarding-page .onboarding-login-embedded .login-container {
+  display: block;
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.onboarding-form-title {
+  margin: 0 0 24px;
+
+  color: #111111;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.onboarding-page .onboarding-register-embedded form,
+.onboarding-page .onboarding-login-embedded form {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+}
+
+.onboarding-page .onboarding-register-embedded form > label,
+.onboarding-page .onboarding-login-embedded form > label {
+  margin: 4px 0 0;
+
+  color: #111111;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.onboarding-page .onboarding-register-embedded form > input,
+.onboarding-page .onboarding-register-embedded form > select,
+.onboarding-page .onboarding-login-embedded form > input,
+.onboarding-page .onboarding-password-field input {
+  box-sizing: border-box;
+  display: block;
+
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+
+  margin: 0;
+  padding: 0 14px;
+
+  border: 1px solid #d2d2d7;
+  border-radius: 12px;
+
+  background: #ffffff;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 16px;
+  box-shadow: none;
+}
+
+.onboarding-page .onboarding-register-embedded form > input:focus,
+.onboarding-page .onboarding-register-embedded form > select:focus,
+.onboarding-page .onboarding-login-embedded form > input:focus,
+.onboarding-page .onboarding-password-field input:focus {
+  outline: 2px solid #007aff;
+  outline-offset: 1px;
+}
+
+/* Show / hide password */
+
+.onboarding-password-field {
+  position: relative;
+  width: 100%;
+}
+
+.onboarding-page .onboarding-password-field input {
+  padding-right: 90px;
+}
+
+.onboarding-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: 0;
+  padding: 8px;
+
+  background: transparent;
+  color: #007aff;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.onboarding-form-message {
+  margin-top: 12px;
+  color: #c62828;
+  font-size: 14px;
+  text-align: left;
+}
+
+@media (max-height: 450px) {
   .onboarding-content {
-    width: 100%;
-    max-width: 360px;
-    min-height: 360px;
-  
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  
-    gap: 72px;
+    min-height: 0;
   }
-  
+
   .onboarding-logo {
-    margin: 0;
-  
-    color: #111111;
-    font-size: clamp(64px, 18vw, 84px);
-    font-weight: 750;
-    line-height: 1;
-    letter-spacing: -4px;
-    text-align: center;
+    font-size: 64px;
   }
-  
-  .onboarding-actions {
-    width: 100%;
-  
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  
-  .onboarding-button {
-    width: 100%;
-    min-height: 54px;
-  
-    border: 0;
-    border-radius: 999px;
-  
-    font: inherit;
-    font-size: 17px;
-    font-weight: 600;
-  
-    cursor: pointer;
-    touch-action: manipulation;
-  }
-  
-  .onboarding-primary {
-    background: #007aff;
-    color: #ffffff;
-  }
-  
-  .onboarding-secondary {
-    background: #f5f5f7;
-    color: #111111;
-  }
-  
-  .onboarding-button:focus-visible {
-    outline: 3px solid #007aff;
-    outline-offset: 3px;
-  }
-  
-  .onboarding-button:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-  
-  @media (max-height: 450px) {
-    .onboarding-content {
-      min-height: 280px;
-      gap: 36px;
-    }
-  }
-  
+}
+
