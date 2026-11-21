@@ -15,16 +15,17 @@
   height: 40px;
   box-sizing: border-box;
   padding: 10px;
-  border: 1px solid #dddddd;
-  border-radius: 8px;
+  border: 1px solid #d2d2d7;
+  border-radius: 12px;
   background: #ffffff;
   color: #111111;
-  font: 14px Arial, sans-serif;
+  font-family: inherit;
+  font-size: 14px;
   resize: none;
 }
 
 .response-composer textarea:focus {
-  outline: 2px solid #c62828;
+  outline: 2px solid #007aff;
 }
 
 .response-composer-row button {
@@ -34,8 +35,8 @@
   width: 40px;
   height: 40px;
   border: none;
-  border-radius: 8px;
-  background: #c62828;
+  border-radius: 12px;
+  background: #007aff;
   cursor: pointer;
 }
 
@@ -49,6 +50,11 @@
   height: 20px;
 }
 
+.response-composer-row button:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
 .response-character-count {
   display: block;
   margin-top: 4px;
@@ -58,6 +64,9 @@
 }
 
 .response-rate-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 8px 0 0;
   padding: 12px;
   border-radius: 8px;
@@ -65,12 +74,6 @@
   color: #c62828;
   font-size: 12px;
   line-height: 1.5;
-}
-
-.response-rate-message {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .response-rate-message img {
