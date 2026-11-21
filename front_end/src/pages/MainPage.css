@@ -1,15 +1,20 @@
+
 .main-page {
   min-height: 100dvh;
   background: #ffffff;
   color: #111111;
-  font-family: Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
 .main-container {
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  padding: 12px 16px 20px;
+  padding: 16px 16px 20px;
   box-sizing: border-box;
 }
 
@@ -17,12 +22,12 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
 
 .main-header h1 {
   margin: 0;
-  color: #c62828;
+  color: #111111;
   font-size: 22px;
   font-weight: 800;
   line-height: 1.15;
@@ -33,6 +38,7 @@
   font-size: 13px;
   color: #111111;
 }
+
 
 .main-actions {
   display: flex;
@@ -59,7 +65,7 @@
 
 .main-categories {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   padding: 6px 0 12px;
   border-bottom: 1px solid #eeeeee;
@@ -72,20 +78,21 @@
 
 .main-category {
   flex-shrink: 0;
-  padding: 8px 10px;
+  padding: 9px 14px;
   border: none;
-  border-radius: 5px;
-  background: #f5f5f5;
+  border-radius: 999px;
+  background: #f5f5f7;
   color: #555555;
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
 }
 
 .main-category.active {
-  background: #c62828;
+  background: #007aff;
   color: #ffffff;
   font-weight: 600;
 }
+
 
 .main-feed {
   display: flex;
@@ -101,7 +108,9 @@
   text-align: center;
 }
 
+
 .main-page button:focus-visible {
-  outline: 2px solid #c62828;
+  outline: 2px solid #007aff;
   outline-offset: 2px;
 }
+
